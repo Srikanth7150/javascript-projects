@@ -9,7 +9,7 @@ const questions = [
         ]
     },
     {
-             question: "which is smallest country in the world",
+             question: "which is smallest country in the world ?",
         answers: [
             { text: "Vatican",correct: true},
             { text: "Bhutan",correct: false},
@@ -18,7 +18,7 @@ const questions = [
         ]
     },
     {
-             question: "which is largest desert in the world",
+             question: "which is largest desert in the world ?",
         answers: [
             { text: "Kalahari",correct: false},
             { text: "Gobi",correct: false},
@@ -27,7 +27,7 @@ const questions = [
         ]
     },
     {
-             question: "which is smallest continent in the world",
+             question: "which is smallest continent in the world ?",
         answers: [
             { text: "Asia",correct: false},
             { text: "Australia",correct: true},
@@ -51,6 +51,7 @@ function startQuiz(){
     showQuestion();
 }
 function showQuestion() {
+    resetstate();
     let currentQuestion = questions[currentQuestionIndex];
     let questionNo = currentQuestionIndex + 1;
 
@@ -61,7 +62,63 @@ function showQuestion() {
         button.innerHTML = answer.text;
         button.classList.add("btn");
         answerButtons.appendChild(button);
+        if(answer.correct){
+            button.dataset.correct = answer.correct;
+        }
+        button.addEventListener("click", selectAnswer);
     });
 }
+
+
+    function resetstate(){
+        nextButton.style.display = "none";
+        while(answerButtons.firstChild){
+            answerButtons.removeChild(answerButtons.firstChild)
+        }
+    }
+
+    function selectAnswer(e){
+        const selectedBtn = e.target;
+        const isCorrect = selectedBtn.dataset.correct === "true";
+        if(isCorrect){
+            selectedBtn.classList.add("correct");
+            score++;
+        }else{
+            selectedBtn.classList.add("incorrect");
+        }
+        Array.from(answerButtons.children).forEach(button => {
+            if(button.dataset.correct === "true"){
+                button.classList.add("correct");
+            }
+            button.disabled = true;
+        });
+        nextButton.style.display = "block";
+    }
+    
+    function showscore(){
+        resetstate();
+        questionElement.innerHTML = `you scored ${score} out of ${question.length}`;
+        nextButton.innerHTML = "Play Again";
+        nextButton.style.display ="block"
+    }
+
+
+
+    function handleNextbutton(){
+        currentQuestionIndex++;
+        if(currentQuestionIndex < questions.length){
+            showQuestion();
+        }else{
+            showscore();
+        }
+    }
+    nextButton.addEventListener("click", ()=>{
+        if(currentQuestionIndex < questions.length){
+            handleNextbutton();
+        }else{
+            startQuiz();
+        }
+    });
+
 
  startQuiz();
